@@ -79,3 +79,13 @@ variable "tnc_key_pem" {
   type        = "string"
   description = "The TNC key in PEM format."
 }
+
+variable "service_account_public_key_pem" {
+  type        = "string"
+  description = "The Service Account public key in PEM format"
+}
+
+variable "service_account_private_key_pem" {
+  type        = "string"
+  description = "The Service Account private key in PEM format"
+}
