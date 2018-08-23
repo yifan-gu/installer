@@ -12,6 +12,7 @@ import (
 
 var (
 	installConfigCommand = kingpin.Command("install-config", "Generate the Install Config asset")
+	tlsCommand           = kingpin.Command("tls-assets", "Generate the tls asset")
 
 	dirFlag  = kingpin.Flag("dir", "assets directory").Default(".").String()
 	logLevel = kingpin.Flag("log-level", "log level (e.g. \"debug\")").Default("info").Enum("debug", "info", "warn", "error", "fatal", "panic")
@@ -27,6 +28,8 @@ func main() {
 	switch command {
 	case installConfigCommand.FullCommand():
 		targetAsset = assetStock.InstallConfig()
+	case tlsCommand.FullCommand():
+		targetAsset = assetStock.TLSAssets()
 	}
 
 	l, err := log.ParseLevel(*logLevel)

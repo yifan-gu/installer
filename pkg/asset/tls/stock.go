@@ -24,6 +24,9 @@ type Stock interface {
 	TNCCertKey() asset.Asset
 	ClusterAPIServerCertKey() asset.Asset
 	ServiceAccountKeyPair() asset.Asset
+
+	// TLSAssets generates all the tls assets, this is just
+	TLSAssets() asset.Asset
 }
 
 type StockImpl struct {
@@ -42,6 +45,8 @@ type StockImpl struct {
 	tncCertKey                asset.Asset
 	clusterAPIServerCertKey   asset.Asset
 	serviceAccountKeyPair     asset.Asset
+
+	tlsAssets asset.Asset
 }
 
 var _ Stock = (*StockImpl)(nil)
@@ -231,6 +236,8 @@ func (s *StockImpl) EstablishStock(stock installconfig.Stock, rootDir string) {
 		PrivKeyFileName: "service-account.key",
 		PubKeyFileName:  "service-account.pub",
 	}
+
+	s.tlsAssets = &tlsAssets{s}
 }
 
 func (s *StockImpl) RootCA() asset.Asset                    { return s.rootCA }
@@ -248,3 +255,33 @@ func (s *StockImpl) KubeletCertKey() asset.Asset            { return s.kubeletCe
 func (s *StockImpl) TNCCertKey() asset.Asset                { return s.tncCertKey }
 func (s *StockImpl) ClusterAPIServerCertKey() asset.Asset   { return s.clusterAPIServerCertKey }
 func (s *StockImpl) ServiceAccountKeyPair() asset.Asset     { return s.serviceAccountKeyPair }
+
+func (s *StockImpl) TLSAssets() asset.Asset {
+	return s.tlsAssets
+}
+
+type tlsAssets struct {
+	*StockImpl
+}
+
+func (s *tlsAssets) Dependencies() []asset.Asset {
+	return []asset.Asset{
+		s.RootCA(),
+		s.KubeCA(),
+		s.EtcdCA(),
+		s.AggregatorCA(),
+		s.ServiceServingCA(),
+		s.EtcdClientCertKey(),
+		s.AdminCertKey(),
+		s.IngressCertKey(),
+		s.APIServerCertKey(),
+		s.OpenshiftAPIServerCertKey(),
+		s.KubeletCertKey(),
+		s.TNCCertKey(),
+		s.ClusterAPIServerCertKey(),
+		s.ServiceAccountKeyPair(),
+	}
+}
+func (s *tlsAssets) Generate(map[asset.Asset]*asset.State) (*asset.State, error) {
+	return nil, nil
+}
