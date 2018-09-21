@@ -76,7 +76,7 @@ func TestInstallConfigGenerate(t *testing.T) {
 			},
 			expectedPlatformYaml: `  aws:
     region: test-region
-    vpcCIDRBlock: ""
+    vpcCIDRBlock: 10.0.0.0/16
     vpcID: ""`,
 		},
 		{
@@ -87,11 +87,13 @@ func TestInstallConfigGenerate(t *testing.T) {
 			},
 			expectedPlatformYaml: `  libvirt:
     URI: test-uri
+    defaultMachinePlatform:
+      image: http://aos-ostree.rhev-ci-vms.eng.rdu2.redhat.com/rhcos/images/cloud/latest/rhcos-qemu.qcow2.gz
     masterIPs: null
     network:
-      if: ""
-      ipRange: ""
-      name: ""`,
+      if: tt0
+      ipRange: 192.168.124.0/24
+      name: test-cluster-name`,
 		},
 	}
 	for _, tc := range cases {
@@ -167,7 +169,7 @@ metadata:
 networking:
   podCIDR: 10.2.0.0/16
   serviceCIDR: 10.3.0.0/16
-  type: ""
+  type: flannel
 platform:
 %s
 pullSecret: test-pull-secret

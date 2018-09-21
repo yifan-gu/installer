@@ -17,6 +17,11 @@ import (
 var (
 	defaultServiceCIDR = parseCIDR("10.3.0.0/16")
 	defaultPodCIDR     = parseCIDR("10.2.0.0/16")
+	defaultVPCCIDR     = "10.0.0.0/16"
+
+	defaultLibvirtNetworkIfName  = "tt0"
+	defaultLibvirtNetworkIPRange = "192.168.124.0/24"
+	defaultLibvirtImageURL       = "http://aos-ostree.rhev-ci-vms.eng.rdu2.redhat.com/rhcos/images/cloud/latest/rhcos-qemu.qcow2.gz"
 )
 
 // installConfig generates the install-config.yml file.
@@ -63,6 +68,10 @@ func (a *installConfig) Generate(dependencies map[asset.Asset]*asset.State) (*as
 		},
 		BaseDomain: baseDomain,
 		Networking: types.Networking{
+			// TODO(yifan): Flannel is the temporal default network type for now,
+			// Need to update it to the new types.
+			Type: "flannel",
+
 			ServiceCIDR: ipnet.IPNet{
 				IPNet: defaultServiceCIDR,
 			},
@@ -89,12 +98,21 @@ func (a *installConfig) Generate(dependencies map[asset.Asset]*asset.State) (*as
 	case AWSPlatformType:
 		region := string(platformState.Contents[1].Data)
 		installConfig.AWS = &types.AWSPlatform{
-			Region: region,
+			Region:       region,
+			VPCCIDRBlock: defaultVPCCIDR,
 		}
 	case LibvirtPlatformType:
 		uri := string(platformState.Contents[1].Data)
 		installConfig.Libvirt = &types.LibvirtPlatform{
 			URI: uri,
+			Network: types.LibvirtNetwork{
+				Name:    clusterName,
+				IfName:  defaultLibvirtNetworkIfName,
+				IPRange: defaultLibvirtNetworkIPRange,
+			},
+			DefaultMachinePlatform: &types.LibvirtMachinePoolPlatform{
+				Image: defaultLibvirtImageURL,
+			},
 		}
 	default:
 		return nil, fmt.Errorf("unknown platform type %q", platform)
