@@ -83,11 +83,11 @@ func (a *installConfig) Generate(dependencies map[asset.Asset]*asset.State) (*as
 		Machines: []types.MachinePool{
 			{
 				Name:     "master",
-				Replicas: func(x int64) *int64 { return &x }(3),
+				Replicas: func(x int64) *int64 { return &x }(1),
 			},
 			{
 				Name:     "worker",
-				Replicas: func(x int64) *int64 { return &x }(3),
+				Replicas: func(x int64) *int64 { return &x }(1),
 			},
 		},
 	}
