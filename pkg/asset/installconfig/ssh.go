@@ -39,7 +39,7 @@ func readSSHKey(path string) (key []byte, err error) {
 }
 
 // Generate generates the SSH public key asset.
-func (a *sshPublicKey) Generate(map[asset.Asset]*asset.State) (state *asset.State, err error) {
+func (a *sshPublicKey) Generate(map[asset.Asset]*asset.State, map[string][]byte) (state *asset.State, err error) {
 	if value, ok := os.LookupEnv("OPENSHIFT_INSTALL_SSH_PUB_KEY"); ok {
 		if value != "" {
 			if err := validate.OpenSSHPublicKey(value); err != nil {

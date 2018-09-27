@@ -64,7 +64,7 @@ func (c *CertKey) Dependencies() []asset.Asset {
 }
 
 // Generate generates the cert/key pair based on its dependencies.
-func (c *CertKey) Generate(parents map[asset.Asset]*asset.State) (*asset.State, error) {
+func (c *CertKey) Generate(parents map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
 	cfg := &CertCfg{
 		Subject:      c.Subject,
 		KeyUsages:    c.KeyUsages,

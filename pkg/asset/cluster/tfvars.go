@@ -36,7 +36,7 @@ func (t *TerraformVariables) Dependencies() []asset.Asset {
 }
 
 // Generate generates the terraform.tfvars file.
-func (t *TerraformVariables) Generate(parents map[asset.Asset]*asset.State) (*asset.State, error) {
+func (t *TerraformVariables) Generate(parents map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
 	installCfg, err := installconfig.GetInstallConfig(t.installConfig, parents)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get install config state in the parent asset states")

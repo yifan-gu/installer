@@ -16,7 +16,7 @@ func (f fakeAsset) Dependencies() []asset.Asset {
 	return nil
 }
 
-func (f fakeAsset) Generate(map[asset.Asset]*asset.State) (*asset.State, error) {
+func (f fakeAsset) Generate(map[asset.Asset]*asset.State, map[string][]byte) (*asset.State, error) {
 	return nil, nil
 }
 

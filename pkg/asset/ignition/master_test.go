@@ -33,7 +33,7 @@ machines:
 		installConfigAsset: stateWithContentsData(installConfig),
 		rootCAAsset:        stateWithContentsData("test-rootCA-priv", "test-rootCA-pub"),
 	}
-	masterState, err := master.Generate(dependencies)
+	masterState, err := master.Generate(dependencies, nil)
 	assert.NoError(t, err, "unexpected error generating master asset")
 	expectedIgnitionConfigNames := []string{
 		"master-0.ign",

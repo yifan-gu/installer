@@ -27,7 +27,7 @@ region: us-east
 		installConfigAsset: stateWithContentsData(installConfig),
 		rootCAAsset:        stateWithContentsData("test-rootCA-priv", "test-rootCA-pub"),
 	}
-	workerState, err := worker.Generate(dependencies)
+	workerState, err := worker.Generate(dependencies, nil)
 	assert.NoError(t, err, "unexpected error generating worker asset")
 	assert.Equal(t, 1, len(workerState.Contents), "unexpected number of contents in worker state")
 	assert.Equal(t, "worker.ign", workerState.Contents[0].Name, "unexpected name for worker ignition config")

@@ -126,7 +126,7 @@ func (a *bootstrap) Dependencies() []asset.Asset {
 }
 
 // Generate generates the ignition config for the bootstrap asset.
-func (a *bootstrap) Generate(dependencies map[asset.Asset]*asset.State) (*asset.State, error) {
+func (a *bootstrap) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
 	installConfig, err := installconfig.GetInstallConfig(a.installConfig, dependencies)
 	if err != nil {
 		return nil, err

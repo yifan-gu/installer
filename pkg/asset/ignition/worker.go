@@ -34,7 +34,7 @@ func (a *worker) Dependencies() []asset.Asset {
 }
 
 // Generate generates the ignition config for the worker asset.
-func (a *worker) Generate(dependencies map[asset.Asset]*asset.State) (*asset.State, error) {
+func (a *worker) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
 	installConfig, err := installconfig.GetInstallConfig(a.installConfig, dependencies)
 	if err != nil {
 		return nil, err

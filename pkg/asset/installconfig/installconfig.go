@@ -47,7 +47,7 @@ func (a *installConfig) Dependencies() []asset.Asset {
 }
 
 // Generate generates the install-config.yml file.
-func (a *installConfig) Generate(dependencies map[asset.Asset]*asset.State) (*asset.State, error) {
+func (a *installConfig) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
 	clusterID := string(dependencies[a.assetStock.ClusterID()].Contents[0].Data)
 	emailAddress := string(dependencies[a.assetStock.EmailAddress()].Contents[0].Data)
 	password := string(dependencies[a.assetStock.Password()].Contents[0].Data)

@@ -19,7 +19,7 @@ func (f fakeInstallConfig) Dependencies() []asset.Asset {
 	return nil
 }
 
-func (f fakeInstallConfig) Generate(map[asset.Asset]*asset.State) (*asset.State, error) {
+func (f fakeInstallConfig) Generate(map[asset.Asset]*asset.State, map[string][]byte) (*asset.State, error) {
 	return &asset.State{
 		Contents: []asset.Content{
 			{

@@ -63,7 +63,7 @@ func (a *Platform) Dependencies() []asset.Asset {
 }
 
 // Generate queries for input from the user.
-func (a *Platform) Generate(map[asset.Asset]*asset.State) (*asset.State, error) {
+func (a *Platform) Generate(map[asset.Asset]*asset.State, map[string][]byte) (*asset.State, error) {
 	platform, err := a.queryUserForPlatform()
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func (a *Platform) queryUserForPlatform() (string, error) {
 		EnvVarName: "OPENSHIFT_INSTALL_PLATFORM",
 	}
 
-	platform, err := prompt.Generate(nil)
+	platform, err := prompt.Generate(nil, nil)
 	if err != nil {
 		return "", err
 	}
@@ -144,7 +144,7 @@ func (a *Platform) awsPlatform() (*asset.State, error) {
 		},
 		EnvVarName: "OPENSHIFT_INSTALL_AWS_REGION",
 	}
-	region, err := prompt.Generate(nil)
+	region, err := prompt.Generate(nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -177,7 +177,7 @@ func (a *Platform) libvirtPlatform() (*asset.State, error) {
 		},
 		EnvVarName: "OPENSHIFT_INSTALL_LIBVIRT_URI",
 	}
-	uri, err := prompt.Generate(nil)
+	uri, err := prompt.Generate(nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -69,7 +69,7 @@ func (mao *machineAPIOperator) Dependencies() []asset.Asset {
 }
 
 // Generate generates the network-operator-config.yml and network-operator-manifest.yml files
-func (mao *machineAPIOperator) Generate(dependencies map[asset.Asset]*asset.State) (*asset.State, error) {
+func (mao *machineAPIOperator) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
 	ic, err := installconfig.GetInstallConfig(mao.installConfigAsset, dependencies)
 	if err != nil {
 		return nil, err

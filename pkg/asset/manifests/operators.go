@@ -77,7 +77,7 @@ func (m *manifests) Dependencies() []asset.Asset {
 }
 
 // Generate generates the respective operator config.yml files
-func (m *manifests) Generate(dependencies map[asset.Asset]*asset.State) (*asset.State, error) {
+func (m *manifests) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
 	//cvo := dependencies[m.assetStock.ClusterVersionOperator()].Contents[0]
 	kco := dependencies[m.assetStock.KubeCoreOperator()].Contents[0]
 	no := dependencies[m.assetStock.NetworkOperator()].Contents[0]

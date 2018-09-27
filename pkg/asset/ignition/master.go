@@ -36,7 +36,7 @@ func (a *master) Dependencies() []asset.Asset {
 }
 
 // Generate generates the ignition config for the master asset.
-func (a *master) Generate(dependencies map[asset.Asset]*asset.State) (*asset.State, error) {
+func (a *master) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
 	installConfig, err := installconfig.GetInstallConfig(a.installConfig, dependencies)
 	if err != nil {
 		return nil, err

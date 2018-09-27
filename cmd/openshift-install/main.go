@@ -63,7 +63,14 @@ func main() {
 		ignitionConfigsCommand.FullCommand(),
 		manifestsCommand.FullCommand(),
 		clusterCommand.FullCommand():
-		assetStore := &asset.StoreImpl{}
+
+		onDiskFiles, err := asset.LoadOnDiskFiles(*dirFlag)
+		if err != nil {
+			log.Fatalf("failed to load on-disk assets: %v", err)
+			os.Exit(1)
+		}
+
+		assetStore := &asset.StoreImpl{OnDiskFiles: onDiskFiles}
 		for _, asset := range targetAssets {
 			st, err := assetStore.Fetch(asset)
 			if err != nil {

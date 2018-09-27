@@ -40,7 +40,7 @@ func (t *tectonic) Dependencies() []asset.Asset {
 }
 
 // Generate generates the respective operator config.yml files
-func (t *tectonic) Generate(dependencies map[asset.Asset]*asset.State) (*asset.State, error) {
+func (t *tectonic) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
 	ic, err := installconfig.GetInstallConfig(t.installConfig, dependencies)
 	if err != nil {
 		return nil, err
