@@ -16,7 +16,12 @@ func (a *clusterID) Dependencies() []asset.Asset {
 }
 
 // Generate generates a new UUID
-func (a *clusterID) Generate(map[asset.Asset]*asset.State, map[string][]byte) (*asset.State, error) {
+func (a *clusterID) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
+	// Short-circuit if install-config already exisits.
+	if _, ok := ondisk[installCfgFilename]; ok {
+		return nil, nil
+	}
+
 	return &asset.State{
 		Contents: []asset.Content{
 			{Data: []byte(uuid.New())},

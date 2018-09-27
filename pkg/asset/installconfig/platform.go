@@ -63,7 +63,12 @@ func (a *Platform) Dependencies() []asset.Asset {
 }
 
 // Generate queries for input from the user.
-func (a *Platform) Generate(map[asset.Asset]*asset.State, map[string][]byte) (*asset.State, error) {
+func (a *Platform) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
+	// Short-circuit if install-config already exisits.
+	if _, ok := ondisk[installCfgFilename]; ok {
+		return nil, nil
+	}
+
 	platform, err := a.queryUserForPlatform()
 	if err != nil {
 		return nil, err
