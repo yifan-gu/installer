@@ -2,7 +2,10 @@ package manifests
 
 import (
 	"encoding/base64"
+	"fmt"
+	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/openshift/installer/pkg/asset"
 	"github.com/openshift/installer/pkg/asset/installconfig"
@@ -21,6 +24,10 @@ type tectonic struct {
 	ingressCertKey asset.Asset
 	kubeCA         asset.Asset
 }
+
+const (
+	tectonicManifestsDir = "tectonic"
+)
 
 var _ asset.Asset = (*tectonic)(nil)
 
@@ -41,6 +48,21 @@ func (t *tectonic) Dependencies() []asset.Asset {
 
 // Generate generates the respective operator config.yml files
 func (t *tectonic) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
+	var state asset.State
+
+	for filename, data := range ondisk {
+		if strings.HasPrefix(filename, fmt.Sprintf("%s%s", tectonicManifestsDir, os.PathSeparator)) {
+			state.Contents = append(state.Contents, asset.Content{
+				Name: filename,
+				Data: data,
+			})
+		}
+	}
+
+	if len(state.Contents) > 0 {
+		return &state, nil
+	}
+
 	ic, err := installconfig.GetInstallConfig(t.installConfig, dependencies)
 	if err != nil {
 		return nil, err
@@ -86,13 +108,11 @@ func (t *tectonic) Generate(dependencies map[asset.Asset]*asset.State, ondisk ma
 		"ingress/svc-account.yaml":                               []byte(ingress.SvcAccount),
 	}
 
-	var assetContents []asset.Content
 	for name, data := range assetData {
-		assetContents = append(assetContents, asset.Content{
-			Name: filepath.Join("tectonic", name),
+		state.Contents = append(state.Contents, asset.Content{
+			Name: filepath.Join(tectonicManifestsDir, name),
 			Data: data,
 		})
 	}
-
-	return &asset.State{Contents: assetContents}, nil
+	return &state, nil
 }

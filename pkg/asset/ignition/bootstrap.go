@@ -20,7 +20,8 @@ import (
 )
 
 const (
-	rootDir = "/opt/tectonic"
+	rootDir              = "/opt/tectonic"
+	bootstrapIgnFilename = "bootstrap.ign"
 )
 
 // bootstrapTemplateData is the data to use to replace values in bootstrap
@@ -127,6 +128,16 @@ func (a *bootstrap) Dependencies() []asset.Asset {
 
 // Generate generates the ignition config for the bootstrap asset.
 func (a *bootstrap) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
+	data, ok := ondisk[bootstrapIgnFilename]
+	if ok {
+		return &asset.State{
+			Contents: []asset.Content{{
+				Name: bootstrapIgnFilename,
+				Data: data,
+			}},
+		}, nil
+	}
+
 	installConfig, err := installconfig.GetInstallConfig(a.installConfig, dependencies)
 	if err != nil {
 		return nil, err
@@ -160,14 +171,14 @@ func (a *bootstrap) Generate(dependencies map[asset.Asset]*asset.State, ondisk m
 		ignition.PasswdUser{Name: "core", SSHAuthorizedKeys: []ignition.SSHAuthorizedKey{ignition.SSHAuthorizedKey(installConfig.Admin.SSHKey)}},
 	)
 
-	data, err := json.Marshal(config)
+	data, err = json.Marshal(config)
 	if err != nil {
 		return nil, err
 	}
 
 	return &asset.State{
 		Contents: []asset.Content{{
-			Name: "bootstrap.ign",
+			Name: bootstrapIgnFilename,
 			Data: data,
 		}},
 	}, nil

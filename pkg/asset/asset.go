@@ -47,7 +47,7 @@ func LoadOnDiskFiles(dir string) (map[string][]byte, error) {
 			return err
 		}
 
-		// Run stat since the info can be a symlink.
+		// If it's symlink, follow it.
 		info, err = os.Stat(path)
 		if err != nil {
 			return err

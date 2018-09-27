@@ -14,6 +14,10 @@ import (
 	"github.com/openshift/installer/pkg/types"
 )
 
+const (
+	installCfgFilename = "install-config.yml"
+)
+
 var (
 	defaultServiceCIDR = parseCIDR("10.3.0.0/16")
 	defaultPodCIDR     = parseCIDR("10.2.0.0/16")
@@ -48,6 +52,18 @@ func (a *installConfig) Dependencies() []asset.Asset {
 
 // Generate generates the install-config.yml file.
 func (a *installConfig) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
+	data, ok := ondisk[installCfgFilename]
+	if ok {
+		return &asset.State{
+			Contents: []asset.Content{
+				{
+					Name: installCfgFilename,
+					Data: data,
+				},
+			},
+		}, nil
+	}
+
 	clusterID := string(dependencies[a.assetStock.ClusterID()].Contents[0].Data)
 	emailAddress := string(dependencies[a.assetStock.EmailAddress()].Contents[0].Data)
 	password := string(dependencies[a.assetStock.Password()].Contents[0].Data)
@@ -137,7 +153,7 @@ func (a *installConfig) Generate(dependencies map[asset.Asset]*asset.State, ondi
 	return &asset.State{
 		Contents: []asset.Content{
 			{
-				Name: "install-config.yml",
+				Name: installCfgFilename,
 				Data: data,
 			},
 		},

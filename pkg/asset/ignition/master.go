@@ -2,10 +2,15 @@ package ignition
 
 import (
 	"fmt"
+	"regexp"
 
 	"github.com/openshift/installer/pkg/asset"
 	"github.com/openshift/installer/pkg/asset/installconfig"
 	"github.com/openshift/installer/pkg/asset/tls"
+)
+
+var (
+	masterIgnFilenameRegex = regexp.MustCompile(`^master-[\d]+[.](ign)$`)
 )
 
 // master is an asset that generates the ignition config for master nodes.
@@ -37,20 +42,33 @@ func (a *master) Dependencies() []asset.Asset {
 
 // Generate generates the ignition config for the master asset.
 func (a *master) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
+	var state asset.State
+
+	for filename, data := range ondisk {
+		if masterIgnFilenameRegex.MatchString(filename) {
+			state.Contents = append(state.Contents, asset.Content{
+				Name: filename,
+				Data: data,
+			})
+		}
+	}
+
+	if len(state.Contents) > 0 {
+		return &state, nil
+	}
+
 	installConfig, err := installconfig.GetInstallConfig(a.installConfig, dependencies)
 	if err != nil {
 		return nil, err
 	}
 
-	state := &asset.State{
-		Contents: make([]asset.Content, installConfig.MasterCount()),
-	}
+	state.Contents = make([]asset.Content, installConfig.MasterCount())
 	for i := range state.Contents {
 		state.Contents[i].Name = fmt.Sprintf("master-%d.ign", i)
 		state.Contents[i].Data = pointerIgnitionConfig(installConfig, dependencies[a.rootCA].Contents[tls.CertIndex].Data, "master", fmt.Sprintf("etcd_index=%d", i))
 	}
 
-	return state, nil
+	return &state, nil
 }
 
 // Name returns the human-friendly name of the asset.

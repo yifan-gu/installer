@@ -4,7 +4,10 @@ package manifests
 import (
 	"bytes"
 	"encoding/base64"
+	"fmt"
+	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/openshift/installer/pkg/asset"
@@ -78,6 +81,21 @@ func (m *manifests) Dependencies() []asset.Asset {
 
 // Generate generates the respective operator config.yml files
 func (m *manifests) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
+	var state asset.State
+
+	for filename, data := range ondisk {
+		if strings.HasPrefix(filename, fmt.Sprintf("%s%s", manifestDir, os.PathSeparator)) {
+			state.Contents = append(state.Contents, asset.Content{
+				Name: filename,
+				Data: data,
+			})
+		}
+	}
+
+	if len(state.Contents) > 0 {
+		return &state, nil
+	}
+
 	//cvo := dependencies[m.assetStock.ClusterVersionOperator()].Contents[0]
 	kco := dependencies[m.assetStock.KubeCoreOperator()].Contents[0]
 	no := dependencies[m.assetStock.NetworkOperator()].Contents[0]
@@ -104,20 +122,18 @@ func (m *manifests) Generate(dependencies map[asset.Asset]*asset.State, ondisk m
 		return nil, err
 	}
 
-	state := &asset.State{
-		Contents: []asset.Content{
-			{
-				Name: filepath.Join(manifestDir, "cluster-config.yaml"),
-				Data: []byte(kubeSys),
-			},
-			{
-				Name: filepath.Join("tectonic", "cluster-config.yaml"),
-				Data: []byte(tectonicSys),
-			},
+	state.Contents = []asset.Content{
+		{
+			Name: filepath.Join(manifestDir, "cluster-config.yaml"),
+			Data: []byte(kubeSys),
+		},
+		{
+			Name: filepath.Join(tectonicManifestsDir, "cluster-config.yaml"),
+			Data: []byte(tectonicSys),
 		},
 	}
 	state.Contents = append(state.Contents, m.generateBootKubeManifests(dependencies)...)
-	return state, nil
+	return &state, nil
 }
 
 func (m *manifests) generateBootKubeManifests(dependencies map[asset.Asset]*asset.State) []asset.Content {
