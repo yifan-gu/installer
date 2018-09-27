@@ -50,7 +50,7 @@ func (s *StockImpl) EstablishStock() {
 		assetStock: s,
 	}
 	s.clusterID = &clusterID{}
-	s.emailAddress = &asset.UserProvided{
+	s.emailAddress = &UserProvided{
 		AssetName: "Email Address",
 		Question: &survey.Question{
 			Prompt: &survey.Input{
@@ -63,7 +63,7 @@ func (s *StockImpl) EstablishStock() {
 		},
 		EnvVarName: "OPENSHIFT_INSTALL_EMAIL_ADDRESS",
 	}
-	s.password = &asset.UserProvided{
+	s.password = &UserProvided{
 		AssetName: "Password",
 		Question: &survey.Question{
 			Prompt: &survey.Password{
@@ -73,7 +73,7 @@ func (s *StockImpl) EstablishStock() {
 		},
 		EnvVarName: "OPENSHIFT_INSTALL_PASSWORD",
 	}
-	s.baseDomain = &asset.UserProvided{
+	s.baseDomain = &UserProvided{
 		AssetName: "Base Domain",
 		Question: &survey.Question{
 			Prompt: &survey.Input{
@@ -86,7 +86,7 @@ func (s *StockImpl) EstablishStock() {
 		},
 		EnvVarName: "OPENSHIFT_INSTALL_BASE_DOMAIN",
 	}
-	s.clusterName = &asset.UserProvided{
+	s.clusterName = &UserProvided{
 		AssetName: "Cluster Name",
 		Question: &survey.Question{
 			Prompt: &survey.Input{
@@ -99,7 +99,7 @@ func (s *StockImpl) EstablishStock() {
 		},
 		EnvVarName: "OPENSHIFT_INSTALL_CLUSTER_NAME",
 	}
-	s.pullSecret = &asset.UserProvided{
+	s.pullSecret = &UserProvided{
 		AssetName: "Pull Secret",
 		Question: &survey.Question{
 			Prompt: &survey.Input{

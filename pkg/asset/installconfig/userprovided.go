@@ -1,10 +1,11 @@
-package asset
+package installconfig
 
 import (
 	"io/ioutil"
 	"os"
 
 	"github.com/AlecAivazis/survey"
+	"github.com/openshift/installer/pkg/asset"
 )
 
 // UserProvided generates an asset that is supplied by a user.
@@ -15,15 +16,20 @@ type UserProvided struct {
 	PathEnvVarName string
 }
 
-var _ Asset = (*UserProvided)(nil)
+var _ asset.Asset = (*UserProvided)(nil)
 
 // Dependencies returns no dependencies.
-func (a *UserProvided) Dependencies() []Asset {
-	return []Asset{}
+func (a *UserProvided) Dependencies() []asset.Asset {
+	return []asset.Asset{}
 }
 
 // Generate queries for input from the user.
-func (a *UserProvided) Generate(map[Asset]*State, map[string][]byte) (*State, error) {
+func (a *UserProvided) Generate(dependencies map[asset.Asset]*asset.State, ondisk map[string][]byte) (*asset.State, error) {
+	// Short-circuit if install-config already exisits.
+	if _, ok := ondisk[installCfgFilename]; ok {
+		return nil, nil
+	}
+
 	var response string
 
 	if value, ok := os.LookupEnv(a.EnvVarName); ok {
@@ -44,8 +50,8 @@ func (a *UserProvided) Generate(map[Asset]*State, map[string][]byte) (*State, er
 		}
 	}
 
-	return &State{
-		Contents: []Content{{
+	return &asset.State{
+		Contents: []asset.Content{{
 			Data: []byte(response),
 		}},
 	}, nil
