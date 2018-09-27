@@ -95,7 +95,7 @@ func (a *Platform) Name() string {
 
 func (a *Platform) queryUserForPlatform() (string, error) {
 	sort.Strings(validPlatforms)
-	prompt := asset.UserProvided{
+	prompt := UserProvided{
 		Question: &survey.Question{
 			Prompt: &survey.Select{
 				Message: "Platform",
@@ -137,7 +137,7 @@ func (a *Platform) awsPlatform() (*asset.State, error) {
 	})
 	sort.Strings(longRegions)
 	sort.Strings(shortRegions)
-	prompt := asset.UserProvided{
+	prompt := UserProvided{
 		Question: &survey.Question{
 			Prompt: &survey.Select{
 				Message: "Region",
@@ -199,7 +199,7 @@ func (a *Platform) libvirtPlatform() (*asset.State, error) {
 		},
 	}
 
-	uriPrompt := asset.UserProvided{
+	uriPrompt := UserProvided{
 		Question: &survey.Question{
 			Prompt: &survey.Input{
 				Message: "Libvirt Connection URI",
@@ -215,7 +215,7 @@ func (a *Platform) libvirtPlatform() (*asset.State, error) {
 		return nil, err
 	}
 
-	imagePrompt := asset.UserProvided{
+	imagePrompt := UserProvided{
 		Question: &survey.Question{
 			Prompt: &survey.Input{
 				Message: "Image",

@@ -1,9 +1,10 @@
-package asset
+package installconfig
 
 import (
 	"io/ioutil"
 	"os"
 
+	"github.com/openshift/installer/pkg/asset"
 	survey "gopkg.in/AlecAivazis/survey.v1"
 )
 
@@ -15,15 +16,15 @@ type UserProvided struct {
 	PathEnvVarName string
 }
 
-var _ Asset = (*UserProvided)(nil)
+var _ asset.Asset = (*UserProvided)(nil)
 
 // Dependencies returns no dependencies.
-func (a *UserProvided) Dependencies() []Asset {
-	return []Asset{}
+func (a *UserProvided) Dependencies() []asset.Asset {
+	return []asset.Asset{}
 }
 
 // Generate queries for input from the user.
-func (a *UserProvided) Generate(map[Asset]*State) (*State, error) {
+func (a *UserProvided) Generate(map[asset.Asset]*asset.State) (*asset.State, error) {
 	var response string
 
 	if value, ok := os.LookupEnv(a.EnvVarName); ok {
@@ -44,8 +45,8 @@ func (a *UserProvided) Generate(map[Asset]*State) (*State, error) {
 		}
 	}
 
-	return &State{
-		Contents: []Content{{
+	return &asset.State{
+		Contents: []asset.Content{{
 			Data: []byte(response),
 		}},
 	}, nil
