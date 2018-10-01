@@ -34,6 +34,10 @@ func (f fakeInstallConfig) Name() string {
 	return "Fake Install Config"
 }
 
+func (f fakeInstallConfig) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return nil, false, nil
+}
+
 func TestCertKeyGenerate(t *testing.T) {
 	root := &RootCA{}
 	rootState, err := root.Generate(nil)

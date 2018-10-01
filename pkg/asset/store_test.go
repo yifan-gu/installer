@@ -33,6 +33,10 @@ func (a *testAsset) Name() string {
 	return "Test Asset"
 }
 
+func (a *testAsset) Load(PatternFetcher) (state *State, found bool, err error) {
+	return nil, false, nil
+}
+
 func newTestAsset(gl *generationLog, name string) *testAsset {
 	return &testAsset{
 		name:          name,

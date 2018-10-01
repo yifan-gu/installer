@@ -24,6 +24,10 @@ func (f fakeAsset) Name() string {
 	return "Fake Asset"
 }
 
+func (f fakeAsset) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return nil, false, nil
+}
+
 func TestKubeconfigGenerate(t *testing.T) {
 	rootCA := fakeAsset(0)
 	adminCertKey := fakeAsset(1)

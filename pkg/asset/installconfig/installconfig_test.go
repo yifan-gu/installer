@@ -27,6 +27,10 @@ func (a *testAsset) Name() string {
 	return "Test Asset"
 }
 
+func (a *testAsset) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return nil, false, nil
+}
+
 func TestInstallConfigDependencies(t *testing.T) {
 	stock := &StockImpl{
 		clusterID:    &testAsset{name: "test-cluster-id"},
