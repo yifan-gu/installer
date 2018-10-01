@@ -19,6 +19,7 @@ const (
 	authConfigOIDCGroupsClaim     = "groups"
 	authConfigOIDCUsernameClaim   = "email"
 	networkConfigAdvertiseAddress = "0.0.0.0"
+	kcoCfgFilename                = "kco-config.yml"
 )
 
 // kubeCoreOperator generates the kube-core-operator.yaml files
@@ -63,7 +64,7 @@ func (kco *kubeCoreOperator) Generate(dependencies map[asset.Asset]*asset.State)
 	state := &asset.State{
 		Contents: []asset.Content{
 			{
-				Name: "kco-config.yaml",
+				Name: kcoCfgFilename,
 				Data: data,
 			},
 		},
@@ -132,4 +133,9 @@ func k8sCloudProvider(platform types.Platform) string {
 		//return "libvirt"
 	}
 	return ""
+}
+
+// Load returns the kco config from disk.
+func (kco *kubeCoreOperator) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p(kcoCfgFilename)
 }

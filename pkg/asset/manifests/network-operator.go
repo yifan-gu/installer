@@ -12,7 +12,9 @@ import (
 )
 
 const (
-	defaultMTU = "1450"
+	defaultMTU         = "1450"
+	noCfgFilename      = "network-operator-config.yml"
+	noManifestFilename = "network-operator-manifests.yml"
 )
 
 // networkOperator generates the network-operator-*.yml files
@@ -57,11 +59,11 @@ func (no *networkOperator) Generate(dependencies map[asset.Asset]*asset.State) (
 	state := &asset.State{
 		Contents: []asset.Content{
 			{
-				Name: "network-operator-config.yml",
+				Name: noCfgFilename,
 				Data: netConfig,
 			},
 			{
-				Name: "network-operator-manifests.yml",
+				Name: noManifestFilename,
 				Data: netManifest,
 			},
 		},
@@ -86,4 +88,21 @@ func (no *networkOperator) netConfig() ([]byte, error) {
 
 func (no *networkOperator) manifest() ([]byte, error) {
 	return []byte(""), nil
+}
+
+// Load returns the network operator config and manifest from disk.
+func (no *networkOperator) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	noCfgState, ok, err := p(noCfgFilename)
+	if err != nil || !ok {
+		return nil, false, err
+	}
+
+	noManifestState, ok, err := p(noManifestFilename)
+	if err != nil || !ok {
+		return nil, false, err
+	}
+
+	return &asset.State{
+		Contents: append(noCfgState.Contents, noManifestState.Contents...),
+	}, true, nil
 }

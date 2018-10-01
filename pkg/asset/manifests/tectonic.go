@@ -3,6 +3,7 @@ package manifests
 import (
 	"bytes"
 	"encoding/base64"
+	"fmt"
 	"path/filepath"
 
 	"github.com/openshift/installer/pkg/asset"
@@ -14,6 +15,10 @@ import (
 	"github.com/openshift/installer/pkg/asset/manifests/content/tectonic/updater"
 	"github.com/openshift/installer/pkg/asset/manifests/content/tectonic/updater/appversions"
 	"github.com/openshift/installer/pkg/asset/manifests/content/tectonic/updater/operators"
+)
+
+const (
+	tectonicManifestDir = "tectonic"
 )
 
 // tectonic generates the dependent resource manifests for tectonic (as against bootkube)
@@ -90,10 +95,15 @@ func (t *tectonic) Generate(dependencies map[asset.Asset]*asset.State) (*asset.S
 	var assetContents []asset.Content
 	for name, data := range assetData {
 		assetContents = append(assetContents, asset.Content{
-			Name: filepath.Join("tectonic", name),
+			Name: filepath.Join(tectonicManifestDir, name),
 			Data: data,
 		})
 	}
 
 	return &asset.State{Contents: assetContents}, nil
+}
+
+// Load returns the tectonic asset from disk.
+func (t *tectonic) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p(fmt.Sprintf("%s/*", tectonicManifestDir))
 }

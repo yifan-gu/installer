@@ -15,6 +15,10 @@ import (
 	"github.com/openshift/installer/pkg/types"
 )
 
+const (
+	installCfgFilename = "install-config.yml"
+)
+
 var (
 	defaultServiceCIDR = parseCIDR("10.3.0.0/16")
 	defaultPodCIDR     = parseCIDR("10.2.0.0/16")
@@ -123,7 +127,7 @@ func (a *installConfig) Generate(dependencies map[asset.Asset]*asset.State) (*as
 	return &asset.State{
 		Contents: []asset.Content{
 			{
-				Name: "install-config.yml",
+				Name: installCfgFilename,
 				Data: data,
 			},
 		},
@@ -165,4 +169,9 @@ func ClusterDNSIP(installConfig *types.InstallConfig) (string, error) {
 func parseCIDR(s string) net.IPNet {
 	_, cidr, _ := net.ParseCIDR(s)
 	return *cidr
+}
+
+// Load returns the installconfig from disk.
+func (a *installConfig) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p(installCfgFilename)
 }

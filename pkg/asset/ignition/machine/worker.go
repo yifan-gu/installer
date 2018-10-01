@@ -6,6 +6,10 @@ import (
 	"github.com/openshift/installer/pkg/asset/tls"
 )
 
+const (
+	workerIgnFilename = "worker.ign"
+)
+
 // worker is an asset that generates the ignition config for worker nodes.
 type worker struct {
 	installConfig asset.Asset
@@ -42,7 +46,7 @@ func (a *worker) Generate(dependencies map[asset.Asset]*asset.State) (*asset.Sta
 
 	return &asset.State{
 		Contents: []asset.Content{{
-			Name: "worker.ign",
+			Name: workerIgnFilename,
 			Data: pointerIgnitionConfig(installConfig, dependencies[a.rootCA].Contents[tls.CertIndex].Data, "worker", ""),
 		}},
 	}, nil
@@ -51,4 +55,9 @@ func (a *worker) Generate(dependencies map[asset.Asset]*asset.State) (*asset.Sta
 // Name returns the human-friendly name of the asset.
 func (a *worker) Name() string {
 	return "Worker Ignition Config"
+}
+
+// Load returns the worker ignitions from disk.
+func (a *worker) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p(workerIgnFilename)
 }

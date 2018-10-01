@@ -28,3 +28,8 @@ func (a *clusterID) Generate(map[asset.Asset]*asset.State) (*asset.State, error)
 func (a *clusterID) Name() string {
 	return "Cluster ID"
 }
+
+// Load is a no-op because we don't store this asset to disk.
+func (a *clusterID) Load(asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return nil, false, nil
+}

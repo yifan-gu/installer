@@ -72,3 +72,8 @@ func (m *Metadata) Generate(parents map[asset.Asset]*asset.State) (*asset.State,
 		},
 	}, nil
 }
+
+// Load returns the metadata from disk.
+func (m *Metadata) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p(MetadataFilename)
+}

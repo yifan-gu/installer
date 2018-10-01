@@ -57,3 +57,8 @@ func (a *master) Generate(dependencies map[asset.Asset]*asset.State) (*asset.Sta
 func (a *master) Name() string {
 	return "Master Ignition Config(s)"
 }
+
+// Load returns the master ignitions from disk.
+func (a *master) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p("master-[0-9]*.ign")
+}

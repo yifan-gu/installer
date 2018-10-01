@@ -4,6 +4,7 @@ package manifests
 import (
 	"bytes"
 	"encoding/base64"
+	"fmt"
 	"path/filepath"
 	"text/template"
 
@@ -205,4 +206,9 @@ func applyTemplateData(template *template.Template, templateData interface{}) []
 		panic(err)
 	}
 	return buf.Bytes()
+}
+
+// Load returns the manifests asset from disk.
+func (m *manifests) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p(fmt.Sprintf("%s/*", manifestDir))
 }

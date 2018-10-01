@@ -178,3 +178,8 @@ func parseCAFromAssetState(ca *asset.State) (*rsa.PrivateKey, *x509.Certificate,
 
 	return key, cert, nil
 }
+
+// Load is no-op because the TLS assets are not stored on disk.
+func (c *CertKey) Load(asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return nil, false, nil
+}

@@ -56,3 +56,8 @@ func (a *UserProvided) Generate(map[asset.Asset]*asset.State) (*asset.State, err
 func (a *UserProvided) Name() string {
 	return a.AssetName
 }
+
+// Load is a no-op because we don't store this asset to disk.
+func (a *UserProvided) Load(asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return nil, false, nil
+}

@@ -18,6 +18,11 @@ const (
 	KubeconfigUserNameKubelet = "kubelet"
 )
 
+var (
+	kubeconfigAdminPath   = filepath.Join("auth", "kubeconfig")
+	kubeconfigKubeletPath = filepath.Join("auth", "kubeconfig-kubelet")
+)
+
 // Kubeconfig implements the asset.Asset interface that generates
 // the admin kubeconfig and kubelet kubeconfig.
 type Kubeconfig struct {
@@ -47,13 +52,14 @@ func (k *Kubeconfig) Generate(parents map[asset.Asset]*asset.State) (*asset.Stat
 		return nil, err
 	}
 
-	var keyFilename, certFilename, kubeconfigSuffix string
+	var keyFilename, certFilename, kubeconfigPath string
 	switch k.userName {
 	case KubeconfigUserNameAdmin:
 		keyFilename, certFilename = tls.AdminKeyName, tls.AdminCertName
+		kubeconfigPath = kubeconfigAdminPath
 	case KubeconfigUserNameKubelet:
 		keyFilename, certFilename = tls.KubeletKeyName, tls.KubeletCertName
-		kubeconfigSuffix = fmt.Sprintf("-%s", KubeconfigUserNameKubelet)
+		kubeconfigPath = kubeconfigKubeletPath
 	}
 	clientKeyData, err := asset.GetDataByFilename(k.certKey, parents, keyFilename)
 	if err != nil {
@@ -108,7 +114,7 @@ func (k *Kubeconfig) Generate(parents map[asset.Asset]*asset.State) (*asset.Stat
 		Contents: []asset.Content{
 			{
 				// E.g. generated/auth/kubeconfig-admin.
-				Name: filepath.Join("auth", "kubeconfig"+kubeconfigSuffix),
+				Name: kubeconfigPath,
 				Data: data,
 			},
 		},
@@ -118,4 +124,16 @@ func (k *Kubeconfig) Generate(parents map[asset.Asset]*asset.State) (*asset.Stat
 // Name returns the human-friendly name of the asset.
 func (k *Kubeconfig) Name() string {
 	return "Kubeconfig"
+}
+
+// Load returns the kubeocnfig from disk.
+func (k *Kubeconfig) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	switch k.userName {
+	case KubeconfigUserNameAdmin:
+		return p(kubeconfigAdminPath)
+	case KubeconfigUserNameKubelet:
+		return p(kubeconfigKubeletPath)
+	default:
+	}
+	return nil, false, fmt.Errorf("unrecognized kubeconfig user name: %q", k.userName)
 }

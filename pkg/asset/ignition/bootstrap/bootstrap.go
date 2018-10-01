@@ -21,7 +21,8 @@ import (
 )
 
 const (
-	rootDir = "/opt/tectonic"
+	rootDir              = "/opt/tectonic"
+	bootstrapIgnFilename = "bootstrap.ign"
 )
 
 // bootstrapTemplateData is the data to use to replace values in bootstrap
@@ -168,7 +169,7 @@ func (a *bootstrap) Generate(dependencies map[asset.Asset]*asset.State) (*asset.
 
 	return &asset.State{
 		Contents: []asset.Content{{
-			Name: "bootstrap.ign",
+			Name: bootstrapIgnFilename,
 			Data: data,
 		}},
 	}, nil
@@ -285,4 +286,9 @@ func applyTemplateData(template *template.Template, templateData interface{}) st
 		panic(err)
 	}
 	return buf.String()
+}
+
+// Load returns the bootstrap ignition from disk.
+func (a *bootstrap) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p(bootstrapIgnFilename)
 }

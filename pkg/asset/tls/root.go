@@ -51,3 +51,8 @@ func (c *RootCA) Generate(parents map[asset.Asset]*asset.State) (*asset.State, e
 func (c *RootCA) Name() string {
 	return "Root CA"
 }
+
+// Load is no-op because the TLS assets are not stored on disk.
+func (c *RootCA) Load(asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return nil, false, nil
+}

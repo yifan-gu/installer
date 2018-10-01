@@ -84,3 +84,8 @@ func (t *TerraformVariables) Generate(parents map[asset.Asset]*asset.State) (*as
 		},
 	}, nil
 }
+
+// Load reads the terraform.tfvars from disk.
+func (t *TerraformVariables) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p(tfvarsFilename)
+}

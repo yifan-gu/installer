@@ -100,3 +100,13 @@ func (c *Cluster) Generate(parents map[asset.Asset]*asset.State) (*asset.State, 
 		},
 	}, nil
 }
+
+// Load returns error if the tfstate file is already on-disk, because we want to
+// prevent user from accidentally re-launch the cluster.
+func (c *Cluster) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	_, found, err = p(stateFileName)
+	if found {
+		return nil, false, fmt.Errorf("%q already exisits", stateFileName)
+	}
+	return nil, false, err
+}

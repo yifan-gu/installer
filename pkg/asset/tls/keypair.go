@@ -50,3 +50,8 @@ func (k *KeyPair) Generate(map[asset.Asset]*asset.State) (*asset.State, error) {
 func (k *KeyPair) Name() string {
 	return fmt.Sprintf("Key Pair (%s)", k.PubKeyFileName)
 }
+
+// Load is no-op because the TLS assets are not stored on disk.
+func (k *KeyPair) Load(asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return nil, false, nil
+}

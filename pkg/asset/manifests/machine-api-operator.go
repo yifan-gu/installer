@@ -15,6 +15,7 @@ const (
 	maoTargetNamespace = "openshift-cluster-api"
 	// DefaultChannel is the default RHCOS channel for the cluster.
 	DefaultChannel = "tested"
+	maoCfgFilename = "machine-api-operator-config.yml"
 )
 
 // machineAPIOperator generates the network-operator-*.yml files
@@ -85,7 +86,7 @@ func (mao *machineAPIOperator) Generate(dependencies map[asset.Asset]*asset.Stat
 	state := &asset.State{
 		Contents: []asset.Content{
 			{
-				Name: "machine-api-operator-config.yml",
+				Name: maoCfgFilename,
 				Data: []byte(maoConfig),
 			},
 		},
@@ -136,4 +137,9 @@ func (mao *machineAPIOperator) maoConfig(dependencies map[asset.Asset]*asset.Sta
 	}
 
 	return marshalYAML(cfg)
+}
+
+// Load returns the machine api operator config from disk.
+func (mao *machineAPIOperator) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p(maoCfgFilename)
 }

@@ -265,3 +265,8 @@ func uriValidator(ans interface{}) error {
 	}
 	return nil
 }
+
+// Load is a no-op because we don't store this asset to disk.
+func (a *Platform) Load(asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return nil, false, nil
+}

@@ -19,6 +19,10 @@ type kubeAddonOperator struct {
 	installConfig      *types.InstallConfig
 }
 
+const (
+	kaoCfgFilename = "kube-addon-operator-config.yml"
+)
+
 var _ asset.Asset = (*kubeAddonOperator)(nil)
 
 // Name returns a human friendly name for the operator
@@ -51,7 +55,7 @@ func (kao *kubeAddonOperator) Generate(dependencies map[asset.Asset]*asset.State
 	state := &asset.State{
 		Contents: []asset.Content{
 			{
-				Name: "kube-addon-operator-config.yml",
+				Name: kaoCfgFilename,
 				Data: addonConfig,
 			},
 		},
@@ -74,4 +78,9 @@ func (kao *kubeAddonOperator) addonConfig() ([]byte, error) {
 
 func (kao *kubeAddonOperator) getAPIServerURL() string {
 	return fmt.Sprintf("https://%s-api.%s:6443", kao.installConfig.Name, kao.installConfig.BaseDomain)
+}
+
+// Load returns the kao config from disk.
+func (kao *kubeAddonOperator) Load(p asset.PatternFetcher) (state *asset.State, found bool, err error) {
+	return p(kaoCfgFilename)
 }
