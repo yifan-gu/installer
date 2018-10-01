@@ -15,7 +15,8 @@ type Store interface {
 
 // StoreImpl is the implementation of Store.
 type StoreImpl struct {
-	assets map[Asset]*State
+	assets      map[Asset]*State
+	OnDiskFiles map[string][]byte
 }
 
 // Fetch retrieves the state of the given asset, generating it and its
@@ -29,6 +30,16 @@ func (s *StoreImpl) fetch(asset Asset, indent string) (*State, error) {
 	state, ok := s.assets[asset]
 	if ok {
 		logrus.Debugf("%sFound %s...", indent, asset.Name())
+		return state, nil
+	}
+
+	state, ok, err := asset.Load(LoadFileWithPattern(s.OnDiskFiles))
+	if err != nil {
+		return nil, fmt.Errorf("unexpected error when loading asset %q: %v", asset.Name(), err)
+	}
+
+	if ok {
+		logrus.Debugf("%sFound %s on disk...", indent, asset.Name())
 		return state, nil
 	}
 
@@ -46,7 +57,7 @@ func (s *StoreImpl) fetch(asset Asset, indent string) (*State, error) {
 	}
 
 	logrus.Debugf("%sGenerating %s...", indent, asset.Name())
-	state, err := asset.Generate(dependenciesStates)
+	state, err = asset.Generate(dependenciesStates)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate asset %q: %v", asset.Name(), err)
 	}

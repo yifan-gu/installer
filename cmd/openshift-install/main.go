@@ -32,6 +32,11 @@ func main() {
 	}
 	log.SetLevel(l)
 
+	fileMap, err := asset.ReadAllFiles(*dirFlag)
+	if err != nil {
+		log.Fatalf("failed to read files from dir %q: %v", *dirFlag, err)
+	}
+
 	assetStock := stock.EstablishStock()
 
 	var targetAssets []asset.Asset
@@ -63,7 +68,7 @@ func main() {
 		ignitionConfigsCommand.FullCommand(),
 		manifestsCommand.FullCommand(),
 		clusterCommand.FullCommand():
-		assetStore := &asset.StoreImpl{}
+		assetStore := &asset.StoreImpl{OnDiskFiles: fileMap}
 		for _, asset := range targetAssets {
 			st, err := assetStore.Fetch(asset)
 			if err != nil {

@@ -15,7 +15,14 @@ type Asset interface {
 
 	// Name returns the human-friendly name of the asset.
 	Name() string
+
+	// Load returns the on-disk the asset if they exist.
+	Load(PatternFetcher) (state *State, found bool, err error)
 }
+
+// PatternFetcher returns a state that contains contents whose filenames
+// match the given pattern.
+type PatternFetcher func(pattern string) (state *State, found bool, err error)
 
 // GetDataByFilename searches the file in the asset.State.Contents, and returns its data.
 // filename is the base name of the file.
